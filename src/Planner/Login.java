@@ -19,7 +19,7 @@ public class Login {
         JFrame loginFrame = new JFrame("Login Frame");
         loginFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-        JPanel loginPanel = new JPanel(new GridLayout(0, 2, 20, 20));
+        JPanel loginPanel = new JPanel(new GridLayout(0, 2, 20, 20)); // create gridlayout
 
         JLabel userLabel = new JLabel("Username: ");
         JLabel passLabel = new JLabel("Password: ");
@@ -31,7 +31,6 @@ public class Login {
         loginPanel.add(userTextField);
         loginPanel.add(passLabel);
         loginPanel.add(passTextField);
-        loginPanel.add(new JLabel());
         loginPanel.add(button);
 
         loginPanel.setBorder(new EmptyBorder(10, 20, 10, 20));
@@ -42,6 +41,7 @@ public class Login {
         loginFrame.setResizable(false);
         loginFrame.setVisible(true);
 
+        // adding action listener to verify password, calls main menu if password is correct
         button.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent arg0) {
@@ -53,10 +53,16 @@ public class Login {
                     loginFrame.setVisible(false);
                     loginFrame.dispose();
                 } else {
-                    System.out.println("password is incorrect");
+                    JLabel incorrectPassword = new JLabel("Incorrect credentials");
+                    incorrectPassword.setForeground(Color.RED);
+                    loginPanel.add(incorrectPassword);
+                    loginPanel.revalidate();
+                    loginPanel.repaint();
                 }
             }
         });
+
+        // can press enter to enter password in password text field
         passTextField.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -68,7 +74,11 @@ public class Login {
                     loginFrame.setVisible(false);
                     loginFrame.dispose();
                 } else {
-                    System.out.println("password is incorrect");
+                    JLabel incorrectPassword = new JLabel("Incorrect credentials");
+                    incorrectPassword.setForeground(Color.RED);
+                    loginPanel.add(incorrectPassword);
+                    loginPanel.revalidate();
+                    loginPanel.repaint();
                 }
             }
         });
