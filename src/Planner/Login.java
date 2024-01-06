@@ -3,13 +3,13 @@ package Planner;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.WindowEvent;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 
 public class Login {
     String password = "password";
     String username = "thompson";
+    boolean errorMessageDisplayed = false;
 
     public boolean verifyPassword(String passwordInput, String userInput) {
         return password.equals(passwordInput) && username.equals(userInput);
@@ -53,16 +53,20 @@ public class Login {
                     loginFrame.setVisible(false);
                     loginFrame.dispose();
                 } else {
-                    JLabel incorrectPassword = new JLabel("Incorrect credentials");
-                    incorrectPassword.setForeground(Color.RED);
-                    loginPanel.add(incorrectPassword);
-                    loginPanel.revalidate();
-                    loginPanel.repaint();
+                    if (errorMessageDisplayed) {
+                    }
+                    else {
+                        System.out.println(errorMessageDisplayed);
+                        JLabel passwordIsIncorrect = new JLabel("Password is incorrect");
+                        passwordIsIncorrect.setForeground(Color.RED);
+                        loginPanel.add(passwordIsIncorrect);
+                        errorMessageDisplayed = true;
+                        loginPanel.revalidate();
+                        loginFrame.pack();
+                    }
                 }
             }
         });
-
-        // can press enter to enter password in password text field
         passTextField.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -74,13 +78,19 @@ public class Login {
                     loginFrame.setVisible(false);
                     loginFrame.dispose();
                 } else {
-                    JLabel incorrectPassword = new JLabel("Incorrect credentials");
-                    incorrectPassword.setForeground(Color.RED);
-                    loginPanel.add(incorrectPassword);
-                    loginPanel.revalidate();
-                    loginPanel.repaint();
+                    if (errorMessageDisplayed) {
+                    }
+                    else {
+                        JLabel passwordIsIncorrect = new JLabel("Password is incorrect");
+                        passwordIsIncorrect.setForeground(Color.RED);
+                        loginPanel.add(passwordIsIncorrect);
+                        errorMessageDisplayed = true;
+                        loginPanel.revalidate();
+                        loginFrame.pack();
+                    }
                 }
             }
         });
+
     }
 }
