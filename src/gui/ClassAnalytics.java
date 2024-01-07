@@ -1,4 +1,4 @@
-package Planner;
+package gui;
 
 public class ClassAnalytics {
 }
