@@ -57,10 +57,12 @@ public class MainMenu {
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     String studentName = JOptionPane.showInputDialog("Student name: ");
-                    if (studentName.length() != 0) {
-                        students.add(studentName);
-                        MainFrame.add(new StudentRow(studentName, currentClass));
-                        MainFrame.pack();
+                    if (studentName != null) {
+                        if (!studentName.equals("")) {
+                            students.add(studentName);
+                            MainFrame.add(new StudentRow(studentName, currentClass));
+                            MainFrame.pack();
+                        }
                     }
                 }
             });
