@@ -5,6 +5,7 @@ import java.awt.*;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
+
 import misc.Types;
 
 public class MainMenu extends Types implements Serializable{
@@ -31,19 +32,65 @@ public class MainMenu extends Types implements Serializable{
 
     class MiddleBar extends JPanel implements Serializable
     {
-        MiddleBar()
-        {
-            JComboBox<String> selectClass = new JComboBox<>(GetFlockNames());
+        MiddleBar() {
+             JComboBox<String> selectClass = new JComboBox<>(getFlockNames());
+            selectClass.addActionListener(e -> {
+                for (JPanel panel : studentPanels) {
+                    MainFrame.remove(panel);
+                }
+                studentPanels.clear(); // Clear the list of studentPanels
+
+                // Update currentClass to the selected class
+                currentClass = flocks.get(selectClass.getSelectedIndex());
+
+                // Add new StudentRow panels for each student in the selected class
+                for (Student student : currentClass.students) {
+                    StudentRow studentRow = new StudentRow(student);
+                    studentPanels.add(studentRow);
+                    MainFrame.add(studentRow);
+                }
+                MainFrame.repaint();
+                MainFrame.pack();
+            });
+
             selectClass.addActionListener(e -> currentClass = flocks.get(selectClass.getSelectedIndex()));
 
             JButton newAttendanceReport = new JButton("New Attendance Report");
             newAttendanceReport.addActionListener(e -> new AttendanceMenu());
 
+            JButton addStudent = getAddStudentButton();
+
+            JButton addFlock = new JButton("Add Class");
+            addFlock.addActionListener(e -> {
+                String name = JOptionPane.showInputDialog("Class name: ");
+                if (name != null) {
+                    if (!name.isEmpty()) {
+                        try {
+                            Flock newflock = new Flock(name);
+                            MainFrame.remove(this);
+                            MainFrame.add(new MiddleBar());
+                        } catch (IOException ex) {
+                            throw new RuntimeException(ex);
+                        }
+                        MainFrame.pack();
+                    }
+                }
+            });
+
+            this.add(selectClass);
+            this.add(newAttendanceReport);
+            this.add(addStudent);
+            this.add(addFlock);
+
+            MainFrame.add(this);
+        }
+
+        private JButton getAddStudentButton() {
             JButton addStudent = new JButton("Add Student");
             addStudent.addActionListener(e -> {
                 String studentName = JOptionPane.showInputDialog("Student name: ");
                 if (studentName != null) {
-                    if (!studentName.equals("")) {
+                    if (!studentName.isEmpty()) {
                         try {
                             Student newStudent = new Student(currentClass, studentName);
                             currentClass.students.add(newStudent);
@@ -55,12 +102,7 @@ public class MainMenu extends Types implements Serializable{
                     }
                 }
             });
-
-            this.add(selectClass);
-            this.add(newAttendanceReport);
-            this.add(addStudent);
-
-            MainFrame.add(this);
+            return addStudent;
         }
     }
 
@@ -74,6 +116,21 @@ public class MainMenu extends Types implements Serializable{
 
             JLabel name = new JLabel(student.studentName);
 
+            JButton unenroll = getUnenrollButton(student);
+
+            JButton addGrade = new JButton("Add Grade");
+
+            JButton summary = new JButton("Summary");
+
+            this.add(name);
+            this.add(unenroll);
+            this.add(addGrade);
+            this.add(summary);
+
+            // add exclamation mark for bad performance as if statement here later
+        }
+
+        private JButton getUnenrollButton(Student student) {
             JButton unenroll = new JButton("Unenroll");
             unenroll.addActionListener(e -> {
                 for (JPanel panel : studentPanels) {
@@ -87,23 +144,12 @@ public class MainMenu extends Types implements Serializable{
                 MainFrame.repaint();
                 MainFrame.pack();
             });
-
-            JButton addGrade = new JButton("Add Grade");
-
-            JButton summary = new JButton("Summary");
-
-            this.add(name);
-            this.add(unenroll);
-            this.add(addGrade);
-            this.add(summary);
-
-            // add exclamation mark for bad performance as if statement here later
+            return unenroll;
         }
     }
     MainMenu() throws IOException {
-        Flock biology = new Flock("biology");
         MainFrame.setResizable(false);
-        MainFrame.setLayout(new GridLayout(0, 1, 20, 20));
+        MainFrame.setLayout(new GridLayout(0, 1, 20, 5));
         new TopBar();
         new MiddleBar();
         MainFrame.pack();

@@ -3,7 +3,10 @@ package misc;
 import gui.Login;
 
 import java.io.*;
+import java.security.spec.RSAOtherPrimeInfo;
+import java.sql.Array;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.HashMap;
 
@@ -11,19 +14,21 @@ public class Types {
     public ArrayList<Flock> flocks = new ArrayList<>();
     File flocksFile = new File("data/flocks.txt");
 
-    public String[] GetFlockNames() {
-        String[] flockNames = new String[flocks.size()];
-        for (int i = 0; i < flocks.size(); i++) {
-            flockNames[i] = Flock.name;
-        }
-        return flockNames;
-    }
-
-    public static void initialize()
-    {
+    public static void initialize() {
         File flocksFile = new File("data/flocks.txt");
         new Login();
     }
+
+    public String[] getFlockNames() {
+        String[] flockNames = new String[flocks.size()];
+
+        for (int i = 0; i < flocks.size(); i++) {
+            flockNames[i] = flocks.get(i).name;
+        }
+
+        return flockNames;
+    }
+
     public class Student implements Serializable
     {
         HashMap<String, Integer> grades = new HashMap<>();
@@ -58,17 +63,17 @@ public class Types {
 
     public class Flock implements Serializable
     {
-        public static String name;
+        public String name;
         public ArrayList<Student> students = new ArrayList<>();
         public Flock(String flockName) throws IOException
         {
-            String name = flockName;
+            name = flockName;
             ArrayList<String> students = new ArrayList<>();
             flocks.add(this);
             FileOutputStream outputStream = new FileOutputStream(flocksFile);
             ObjectOutputStream objectOutputStream = new ObjectOutputStream(outputStream);
-            objectOutputStream.writeObject(this);
-
+            objectOutputStream.writeObject(flocksFile);
+            System.out.println(Arrays.toString(getFlockNames()));
         }
 
         public int findStudentIndexByName(String targetStudentName) {
