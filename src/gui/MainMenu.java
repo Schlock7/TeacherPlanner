@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import misc.Types;
 
 public class MainMenu extends Types implements Serializable{
-    JFrame MainFrame = new JFrame();
+    transient JFrame MainFrame = new JFrame();
     ArrayList<JPanel> studentPanels = new ArrayList<>();
     Flock exampleFlock = new Flock("Biology");
 
