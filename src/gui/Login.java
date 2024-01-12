@@ -52,6 +52,8 @@ public class Login {
                     new MainMenu();
                 } catch (IOException e) {
                     throw new RuntimeException(e);
+                } catch (ClassNotFoundException e) {
+                    throw new RuntimeException(e);
                 }
                 loginFrame.setVisible(false);
                 loginFrame.dispose();
@@ -77,6 +79,8 @@ public class Login {
                 try {
                     new MainMenu();
                 } catch (IOException ex) {
+                    throw new RuntimeException(ex);
+                } catch (ClassNotFoundException ex) {
                     throw new RuntimeException(ex);
                 }
                 loginFrame.setVisible(false);

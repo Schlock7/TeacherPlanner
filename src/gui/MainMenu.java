@@ -10,10 +10,8 @@ import misc.Types;
 
 public class MainMenu extends Types implements Serializable{
     transient JFrame MainFrame = new JFrame();
-    ArrayList<JPanel> studentPanels = new ArrayList<>();
-    Flock exampleFlock = new Flock("Biology");
-
-    Flock currentClass = flocks.get(0);
+    static ArrayList<JPanel> studentPanels = new ArrayList<>();
+    static Flock currentClass;
 
     class TopBar extends JPanel
     {
@@ -33,49 +31,15 @@ public class MainMenu extends Types implements Serializable{
     class MiddleBar extends JPanel implements Serializable
     {
         MiddleBar() {
-             JComboBox<String> selectClass = new JComboBox<>(getFlockNames());
-            selectClass.addActionListener(e -> {
-                for (JPanel panel : studentPanels) {
-                    MainFrame.remove(panel);
-                }
-                studentPanels.clear(); // Clear the list of studentPanels
-
-                // Update currentClass to the selected class
-                currentClass = flocks.get(selectClass.getSelectedIndex());
-
-                // Add new StudentRow panels for each student in the selected class
-                for (Student student : currentClass.students) {
-                    StudentRow studentRow = new StudentRow(student);
-                    studentPanels.add(studentRow);
-                    MainFrame.add(studentRow);
-                }
-                MainFrame.repaint();
-                MainFrame.pack();
-            });
-
-            selectClass.addActionListener(e -> currentClass = flocks.get(selectClass.getSelectedIndex()));
+            JComboBox<String> selectClass = getSelectClassComboBox();
+            selectClass.setSelectedIndex(getFlockNames().length - 1);
 
             JButton newAttendanceReport = new JButton("New Attendance Report");
             newAttendanceReport.addActionListener(e -> new AttendanceMenu());
 
             JButton addStudent = getAddStudentButton();
 
-            JButton addFlock = new JButton("Add Class");
-            addFlock.addActionListener(e -> {
-                String name = JOptionPane.showInputDialog("Class name: ");
-                if (name != null) {
-                    if (!name.isEmpty()) {
-                        try {
-                            Flock newflock = new Flock(name);
-                            MainFrame.remove(this);
-                            MainFrame.add(new MiddleBar());
-                        } catch (IOException ex) {
-                            throw new RuntimeException(ex);
-                        }
-                        MainFrame.pack();
-                    }
-                }
-            });
+            JButton addFlock = getAddFlockJButton();
 
             this.add(selectClass);
             this.add(newAttendanceReport);
@@ -83,6 +47,39 @@ public class MainMenu extends Types implements Serializable{
             this.add(addFlock);
 
             MainFrame.add(this);
+        }
+
+        private JButton getAddFlockJButton() {
+            JButton addFlock = new JButton("Add Class");
+            addFlock.addActionListener(e -> {
+                String name = JOptionPane.showInputDialog("Class name: ");
+                if (name != null) {
+                    if (!name.isEmpty()) {
+                        try {
+                            Flock flock = new Flock(name);
+                            MainFrame.remove(this);
+                            MainFrame.add(new MiddleBar());
+
+                            updateStudentRows();
+                        } catch (IOException | ClassNotFoundException ex) {
+                            throw new RuntimeException(ex);
+                        }
+                        MainFrame.pack();
+                    }
+                }
+            });
+            return addFlock;
+        }
+
+        private JComboBox<String> getSelectClassComboBox() {
+            JComboBox<String> selectClass = new JComboBox<>(getFlockNames());
+            selectClass.addActionListener(e -> {
+                currentClass = flocks.get(selectClass.getSelectedIndex());
+                updateStudentRows();
+            });
+
+            selectClass.addActionListener(e -> currentClass = flocks.get(selectClass.getSelectedIndex()));
+            return selectClass;
         }
 
         private JButton getAddStudentButton() {
@@ -93,8 +90,7 @@ public class MainMenu extends Types implements Serializable{
                     if (!studentName.isEmpty()) {
                         try {
                             Student newStudent = new Student(currentClass, studentName);
-                            currentClass.students.add(newStudent);
-                            MainFrame.add(new StudentRow(newStudent));
+                            updateStudentRows();
                         } catch (ClassNotFoundException | IOException ex) {
                             throw new RuntimeException(ex);
                         }
@@ -110,16 +106,11 @@ public class MainMenu extends Types implements Serializable{
     {
         StudentRow(Student student)
         {
-            studentPanels.add(this);
-
             this.setBackground(Color.lightGray);
 
             JLabel name = new JLabel(student.studentName);
-
             JButton unenroll = getUnenrollButton(student);
-
             JButton addGrade = new JButton("Add Grade");
-
             JButton summary = new JButton("Summary");
 
             this.add(name);
@@ -129,37 +120,52 @@ public class MainMenu extends Types implements Serializable{
 
             // add exclamation mark for bad performance as if statement here later
         }
+    }
+
+    public void updateStudentRows() {
+        for (JPanel studentRow : studentPanels) {
+            MainFrame.remove(studentRow);
+        }
+        studentPanels.clear();
+        for (int i = 0; i < currentClass.students.size(); i++) {
+            StudentRow studentRow = new StudentRow(currentClass.students.get(i));
+            studentPanels.add(studentRow);
+            MainFrame.add(studentRow);
+        }
+        MainFrame.repaint();
+        MainFrame.pack();
+    }
 
         private JButton getUnenrollButton(Student student) {
             JButton unenroll = new JButton("Unenroll");
             unenroll.addActionListener(e -> {
-                for (JPanel panel : studentPanels) {
-                    MainFrame.remove(panel);
-                }
-                studentPanels.remove(currentClass.findStudentIndexByName(student.studentName));
                 currentClass.students.remove(currentClass.findStudentIndexByName(student.studentName));
-                for (JPanel panel : studentPanels) {
-                    MainFrame.add(panel);
-                }
-                MainFrame.repaint();
-                MainFrame.pack();
+                updateStudentRows();
             });
             return unenroll;
         }
-    }
-    MainMenu() throws IOException {
+
+    MainMenu() throws IOException, ClassNotFoundException {
+        try {
+            currentClass = flocks.get(0);
+        }
+        catch (IndexOutOfBoundsException e) {
+            currentClass = new Flock("Example class");
+        }
+        if (flocks.size() > 1) {
+            for (String name : getFlockNames())
+                if (name.equals("Example class")) {
+                    flocks.remove(0);
+                    currentClass = flocks.get(0);
+                }
+        }
         MainFrame.setResizable(false);
         MainFrame.setLayout(new GridLayout(0, 1, 20, 5));
+        MainFrame.setLocationRelativeTo(null);
         new TopBar();
         new MiddleBar();
-        MainFrame.pack();
-        MainFrame.setLocationRelativeTo(null);
         MainFrame.setVisible(true);
-        for (int i = 0; i < currentClass.students.size(); i++) {
-            StudentRow studentRow = new StudentRow(currentClass.students.get(i));
-            MainFrame.add(studentRow);
-        }
+        updateStudentRows();
+        MainFrame.pack();
     }
 }
-
-// use fileoutputstream and fileinputstream

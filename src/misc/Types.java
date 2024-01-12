@@ -3,20 +3,47 @@ package misc;
 import gui.Login;
 
 import java.io.*;
-import java.security.spec.RSAOtherPrimeInfo;
-import java.sql.Array;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.HashMap;
 
-public class Types {
-    public ArrayList<Flock> flocks = new ArrayList<>();
-    File flocksFile = new File("data/flocks.txt");
+public abstract class Types {
+    public static ArrayList<Flock> flocks = new ArrayList<>();
+    static File flocksFile = new File("data/flocks.txt");
 
-    public static void initialize() {
-        File flocksFile = new File("data/flocks.txt");
+    public static void initialize() throws IOException, ClassNotFoundException {
+        boolean b = (new File("data/flocks.txt").exists());
+        BufferedReader br = new BufferedReader(new FileReader("data/flocks.txt"));
+        if (!b) {
+            File flocksFile = new File("data/flocks.txt");
+        }
+        else if (!(br.readLine() == null)) {
+            flocks = readFlocksFile();
+        }
+
         new Login();
+    }
+
+    public static ArrayList<Flock> readFlocksFile() throws IOException, ClassNotFoundException {
+        FileInputStream inputStream = new FileInputStream(flocksFile);
+        ObjectInputStream objectInputStream = new ObjectInputStream(inputStream);
+
+        try {
+            Object readObject = objectInputStream.readObject();
+            System.out.println("Type of readObject: " + readObject.getClass().getName());
+
+            if (readObject instanceof ArrayList<?> readFlocksRaw) {
+                if (readFlocksRaw.isEmpty() || readFlocksRaw.get(0) instanceof Flock) {
+                    @SuppressWarnings("unchecked")
+                    ArrayList<Flock> readFlocks = (ArrayList<Flock>) readFlocksRaw;
+                    return readFlocks;
+                }
+            }
+        } catch (ClassCastException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        return new ArrayList<>(); // Return an empty list if unable to read or mismatched data
     }
 
     public String[] getFlockNames() {
@@ -65,15 +92,18 @@ public class Types {
     {
         public String name;
         public ArrayList<Student> students = new ArrayList<>();
-        public Flock(String flockName) throws IOException
-        {
+        public Flock(String flockName) throws IOException, ClassNotFoundException {
             name = flockName;
             ArrayList<String> students = new ArrayList<>();
             flocks.add(this);
             FileOutputStream outputStream = new FileOutputStream(flocksFile);
             ObjectOutputStream objectOutputStream = new ObjectOutputStream(outputStream);
-            objectOutputStream.writeObject(flocksFile);
-            System.out.println(Arrays.toString(getFlockNames()));
+            objectOutputStream.writeObject(flocks);
+
+            FileInputStream inputStream = new FileInputStream(flocksFile);
+            ObjectInputStream objectInputStream = new ObjectInputStream(inputStream);
+            Object readObject = objectInputStream.readObject();
+            System.out.println("Type of readObject: " + readObject.getClass().getName());
         }
 
         public int findStudentIndexByName(String targetStudentName) {
