@@ -50,9 +50,7 @@ public class Login {
             if (verifyPassword(passwordInput, userInput)) {
                 try {
                     new MainMenu();
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                } catch (ClassNotFoundException e) {
+                } catch (IOException | ClassNotFoundException e) {
                     throw new RuntimeException(e);
                 }
                 loginFrame.setVisible(false);
@@ -61,7 +59,6 @@ public class Login {
                 if (errorMessageDisplayed) {
                 }
                 else {
-                    System.out.println(errorMessageDisplayed);
                     JLabel passwordIsIncorrect = new JLabel("Password is incorrect");
                     passwordIsIncorrect.setForeground(Color.RED);
                     loginPanel.add(passwordIsIncorrect);

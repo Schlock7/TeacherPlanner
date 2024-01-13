@@ -24,14 +24,18 @@ public abstract class Types {
         new Login();
     }
 
+    public void writeFlocksFile() throws IOException {
+        FileOutputStream outputStream = new FileOutputStream(flocksFile);
+        ObjectOutputStream objectOutputStream = new ObjectOutputStream(outputStream);
+        objectOutputStream.writeObject(flocks);
+    }
+
     public static ArrayList<Flock> readFlocksFile() throws IOException, ClassNotFoundException {
         FileInputStream inputStream = new FileInputStream(flocksFile);
         ObjectInputStream objectInputStream = new ObjectInputStream(inputStream);
 
         try {
             Object readObject = objectInputStream.readObject();
-            System.out.println("Type of readObject: " + readObject.getClass().getName());
-
             if (readObject instanceof ArrayList<?> readFlocksRaw) {
                 if (readFlocksRaw.isEmpty() || readFlocksRaw.get(0) instanceof Flock) {
                     @SuppressWarnings("unchecked")
@@ -65,25 +69,19 @@ public abstract class Types {
         public Student(Flock flock, String name) throws ClassNotFoundException, IOException{
             flock.students.add(this);
             studentName = name;
-            FileOutputStream outputStream = new FileOutputStream(flocksFile);
-            ObjectOutputStream objectOutputStream = new ObjectOutputStream(outputStream);
-            objectOutputStream.writeObject(flocks);
+            writeFlocksFile();
         }
 
         public void addAttendance (Calendar date, Boolean present) throws IOException
         {
             attendance.put(date, present);
-            FileOutputStream outputStream = new FileOutputStream(flocksFile);
-            ObjectOutputStream objectOutputStream = new ObjectOutputStream(outputStream);
-            objectOutputStream.writeObject(flocks);
+            writeFlocksFile();
         }
 
         public void addGrade (String task, int grade) throws IOException
         {
             grades.put(task, grade);
-            FileOutputStream outputStream = new FileOutputStream(flocksFile);
-            ObjectOutputStream objectOutputStream = new ObjectOutputStream(outputStream);
-            objectOutputStream.writeObject(flocks);
+            writeFlocksFile();
         }
     }
 
@@ -96,14 +94,12 @@ public abstract class Types {
             name = flockName;
             ArrayList<String> students = new ArrayList<>();
             flocks.add(this);
-            FileOutputStream outputStream = new FileOutputStream(flocksFile);
-            ObjectOutputStream objectOutputStream = new ObjectOutputStream(outputStream);
-            objectOutputStream.writeObject(flocks);
+            writeFlocksFile();
 
-            FileInputStream inputStream = new FileInputStream(flocksFile);
+            /* FileInputStream inputStream = new FileInputStream(flocksFile);
             ObjectInputStream objectInputStream = new ObjectInputStream(inputStream);
             Object readObject = objectInputStream.readObject();
-            System.out.println("Type of readObject: " + readObject.getClass().getName());
+            System.out.println("Type of readObject: " + readObject.getClass().getName()); */
         }
 
         public int findStudentIndexByName(String targetStudentName) {

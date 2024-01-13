@@ -18,6 +18,11 @@ public class MainMenu extends Types implements Serializable{
         TopBar() {
             JButton analyticsButton = new JButton("Analytics");
             JButton editClassesButton = new JButton("Edit Classes");
+            editClassesButton.addActionListener(e-> {
+                MainFrame.setVisible(false);
+                MainFrame.dispose();
+                new EditClassesMenu();
+            });
             JButton studentSearch = new JButton("Search Student");
 
             this.add(analyticsButton);

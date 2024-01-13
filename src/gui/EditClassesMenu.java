@@ -15,7 +15,13 @@ public class EditClassesMenu extends Types
     static ArrayList<JPanel> flockRows = new ArrayList<>();
 
     EditClassesMenu() {
-
+        MainFrame.setResizable(false);
+        MainFrame.setLayout(new GridLayout(0, 1, 20, 5));
+        MainFrame.setLocationRelativeTo(null);
+        MainFrame.setVisible(true);
+        MainFrame.pack();
+        new TopBar();
+        updateFlockRows();
     }
 
     public class TopBar extends JPanel
@@ -23,14 +29,31 @@ public class EditClassesMenu extends Types
         TopBar()
         {
             JButton analyticsButton = new JButton("Analytics");
-            JButton backToMainMenu = new JButton("Analytics");
-            JButton searchStudentButton = new JButton("Analytics");
+            analyticsButton.addActionListener(e -> {
+                // new analyticsMenu();
+            });
+
+            JButton backToMainMenu = new JButton("Back to Main Menu");
+            backToMainMenu.addActionListener(e -> {
+                try {
+                    new MainMenu();
+                } catch (IOException | ClassNotFoundException ex) {
+                    throw new RuntimeException(ex);
+                }
+                MainFrame.setVisible(false);
+                MainFrame.dispose();
+            });
+            JButton searchStudentButton = new JButton("Search Student");
+            searchStudentButton.addActionListener(e -> {
+                String studentName = JOptionPane.showInputDialog("Student name: ");
+                // new studentSummary(studentName);
+            });
 
             this.add(analyticsButton);
             this.add(backToMainMenu);
             this.add(searchStudentButton);
 
-            this.add(MainFrame);
+            MainFrame.add(this);
         }
     }
 
@@ -55,11 +78,13 @@ public class EditClassesMenu extends Types
     {
         FlockRow(Flock flock) {
 
-            this.setBackground(Color.gray);
+            this.setBackground(Color.lightGray);
+
+            JLabel classNameLabel = new JLabel(flock.name);
 
             JButton addStudentButton = new JButton("Add Student");
             addStudentButton.addActionListener(e -> {
-                String studentName = JOptionPane.showInputDialog("Class name: ");
+                String studentName = JOptionPane.showInputDialog("Student name: ");
                 if (!studentName.isEmpty()) {
                     try {
                         Student newStudent = new Student(flock, studentName);
@@ -70,27 +95,42 @@ public class EditClassesMenu extends Types
             });
 
             JButton deleteButton = new JButton("Delete");
-            deleteButton.setBackground(Color.RED);
-            deleteButton.setOpaque(true);
+            deleteButton.setForeground(Color.RED);
+            // deleteButton.setOpaque(true);
+            deleteButton.addActionListener(e -> {
+                int input = JOptionPane.showConfirmDialog(null,
+                        "This will permanently delete the class " + flock.name,
+                        "Confirm class delete", JOptionPane.OK_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
+                System.out.println(input);
+                if (input == 0) {
+                    try {
+                        flocks.remove(flock);
+                        writeFlocksFile();
+                    } catch (IOException ex) {
+                        throw new RuntimeException(ex);
+                    }
+                    updateFlockRows();
+                }
+            });
 
             JButton renameButton = new JButton("Rename");
             renameButton.addActionListener(e -> {
                 String flockName = JOptionPane.showInputDialog("Class name: ");
                 if (!flockName.isEmpty()) {
                     try {
-                        Student newStudent = new Student(flock, flockName);
-                    } catch (ClassNotFoundException | IOException ex) {
+                        flock.name = flockName;
+                        writeFlocksFile();
+                    } catch (IOException ex) {
                         throw new RuntimeException(ex);
                     }
                 }
+                updateFlockRows();
             });
 
+            this.add(classNameLabel);
             this.add(renameButton);
             this.add(addStudentButton);
             this.add(deleteButton);
-
-
-            };
         }
     }
 }
