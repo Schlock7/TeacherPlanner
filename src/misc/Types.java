@@ -3,6 +3,7 @@ package misc;
 import gui.Login;
 
 import java.io.*;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -23,6 +24,8 @@ public abstract class Types {
 
         new Login();
     }
+
+
 
     public void writeFlocksFile() throws IOException {
         FileOutputStream outputStream = new FileOutputStream(flocksFile);
@@ -85,21 +88,28 @@ public abstract class Types {
         }
     }
 
+    public class AttendanceReport implements Serializable
+    {
+        String title;
+        AttendanceReport(Flock flock, Calendar date) throws IOException {
+            flock.attendanceReports.add(this);
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy MMM dd HH:mm");
+            title = "Attendance report from the " + sdf.format(date.getTime());
+            writeFlocksFile();
+        }
+    }
+
 
     public class Flock implements Serializable
     {
         public String name;
         public ArrayList<Student> students = new ArrayList<>();
+        public ArrayList<AttendanceReport> attendanceReports = new ArrayList<>();
         public Flock(String flockName) throws IOException, ClassNotFoundException {
             name = flockName;
             ArrayList<String> students = new ArrayList<>();
             flocks.add(this);
             writeFlocksFile();
-
-            /* FileInputStream inputStream = new FileInputStream(flocksFile);
-            ObjectInputStream objectInputStream = new ObjectInputStream(inputStream);
-            Object readObject = objectInputStream.readObject();
-            System.out.println("Type of readObject: " + readObject.getClass().getName()); */
         }
 
         public int findStudentIndexByName(String targetStudentName) {

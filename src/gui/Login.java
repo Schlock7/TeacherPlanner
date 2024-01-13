@@ -75,9 +75,7 @@ public class Login {
             if (verifyPassword(passwordInput, userInput)) {
                 try {
                     new MainMenu();
-                } catch (IOException ex) {
-                    throw new RuntimeException(ex);
-                } catch (ClassNotFoundException ex) {
+                } catch (IOException | ClassNotFoundException ex) {
                     throw new RuntimeException(ex);
                 }
                 loginFrame.setVisible(false);

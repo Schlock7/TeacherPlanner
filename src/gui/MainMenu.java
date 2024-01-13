@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import misc.Types;
 
 public class MainMenu extends Types implements Serializable{
-    transient JFrame MainFrame = new JFrame();
+    transient JFrame mainFrame = new JFrame();
     static ArrayList<JPanel> studentPanels = new ArrayList<>();
     static Flock currentClass;
 
@@ -19,8 +19,8 @@ public class MainMenu extends Types implements Serializable{
             JButton analyticsButton = new JButton("Analytics");
             JButton editClassesButton = new JButton("Edit Classes");
             editClassesButton.addActionListener(e-> {
-                MainFrame.setVisible(false);
-                MainFrame.dispose();
+                mainFrame.setVisible(false);
+                mainFrame.dispose();
                 new EditClassesMenu();
             });
             JButton studentSearch = new JButton("Search Student");
@@ -29,7 +29,7 @@ public class MainMenu extends Types implements Serializable{
             this.add(editClassesButton);
             this.add(studentSearch);
 
-            MainFrame.add(this);
+            mainFrame.add(this);
         }
     }
 
@@ -40,7 +40,7 @@ public class MainMenu extends Types implements Serializable{
             selectClass.setSelectedIndex(getFlockNames().length - 1);
 
             JButton newAttendanceReport = new JButton("New Attendance Report");
-            newAttendanceReport.addActionListener(e -> new AttendanceMenu());
+            newAttendanceReport.addActionListener(e -> new AttendanceMenu(currentClass));
 
             JButton addStudent = getAddStudentButton();
 
@@ -51,7 +51,7 @@ public class MainMenu extends Types implements Serializable{
             this.add(addStudent);
             this.add(addFlock);
 
-            MainFrame.add(this);
+            mainFrame.add(this);
         }
 
         private JButton getAddFlockJButton() {
@@ -62,14 +62,14 @@ public class MainMenu extends Types implements Serializable{
                     if (!name.isEmpty()) {
                         try {
                             Flock flock = new Flock(name);
-                            MainFrame.remove(this);
-                            MainFrame.add(new MiddleBar());
+                            mainFrame.remove(this);
+                            mainFrame.add(new MiddleBar());
 
                             updateStudentRows();
                         } catch (IOException | ClassNotFoundException ex) {
                             throw new RuntimeException(ex);
                         }
-                        MainFrame.pack();
+                        mainFrame.pack();
                     }
                 }
             });
@@ -99,7 +99,7 @@ public class MainMenu extends Types implements Serializable{
                         } catch (ClassNotFoundException | IOException ex) {
                             throw new RuntimeException(ex);
                         }
-                        MainFrame.pack();
+                        mainFrame.pack();
                     }
                 }
             });
@@ -129,16 +129,16 @@ public class MainMenu extends Types implements Serializable{
 
     public void updateStudentRows() {
         for (JPanel studentRow : studentPanels) {
-            MainFrame.remove(studentRow);
+            mainFrame.remove(studentRow);
         }
         studentPanels.clear();
         for (int i = 0; i < currentClass.students.size(); i++) {
             StudentRow studentRow = new StudentRow(currentClass.students.get(i));
             studentPanels.add(studentRow);
-            MainFrame.add(studentRow);
+            mainFrame.add(studentRow);
         }
-        MainFrame.repaint();
-        MainFrame.pack();
+        mainFrame.repaint();
+        mainFrame.pack();
     }
 
         private JButton getUnenrollButton(Student student) {
@@ -164,13 +164,13 @@ public class MainMenu extends Types implements Serializable{
                     currentClass = flocks.get(0);
                 }
         }
-        MainFrame.setResizable(false);
-        MainFrame.setLayout(new GridLayout(0, 1, 20, 5));
-        MainFrame.setLocationRelativeTo(null);
+        mainFrame.setResizable(false);
+        mainFrame.setLayout(new GridLayout(0, 1, 20, 5));
+        mainFrame.setLocationRelativeTo(null);
         new TopBar();
         new MiddleBar();
-        MainFrame.setVisible(true);
+        mainFrame.setVisible(true);
         updateStudentRows();
-        MainFrame.pack();
+        mainFrame.pack();
     }
 }

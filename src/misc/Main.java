@@ -1,4 +1,4 @@
-package gui;
+package misc;
 
 import misc.Types;
 

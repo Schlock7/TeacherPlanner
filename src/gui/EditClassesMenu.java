@@ -11,15 +11,15 @@ import java.util.ArrayList;
 
 public class EditClassesMenu extends Types
 {
-    transient JFrame MainFrame = new JFrame();
+    transient JFrame mainFrame = new JFrame();
     static ArrayList<JPanel> flockRows = new ArrayList<>();
 
     EditClassesMenu() {
-        MainFrame.setResizable(false);
-        MainFrame.setLayout(new GridLayout(0, 1, 20, 5));
-        MainFrame.setLocationRelativeTo(null);
-        MainFrame.setVisible(true);
-        MainFrame.pack();
+        mainFrame.setResizable(false);
+        mainFrame.setLayout(new GridLayout(0, 1, 20, 5));
+        mainFrame.setLocationRelativeTo(null);
+        mainFrame.setVisible(true);
+        mainFrame.pack();
         new TopBar();
         updateFlockRows();
     }
@@ -40,8 +40,8 @@ public class EditClassesMenu extends Types
                 } catch (IOException | ClassNotFoundException ex) {
                     throw new RuntimeException(ex);
                 }
-                MainFrame.setVisible(false);
-                MainFrame.dispose();
+                mainFrame.setVisible(false);
+                mainFrame.dispose();
             });
             JButton searchStudentButton = new JButton("Search Student");
             searchStudentButton.addActionListener(e -> {
@@ -53,7 +53,7 @@ public class EditClassesMenu extends Types
             this.add(backToMainMenu);
             this.add(searchStudentButton);
 
-            MainFrame.add(this);
+            mainFrame.add(this);
         }
     }
 
@@ -61,17 +61,17 @@ public class EditClassesMenu extends Types
     {
         for (JPanel FlockRow : flockRows)
         {
-            MainFrame.remove(FlockRow);
+            mainFrame.remove(FlockRow);
         }
         flockRows.clear();
         for (Flock flock : flocks)
         {
             FlockRow flockRow = new FlockRow(flock);
             flockRows.add(flockRow);
-            MainFrame.add(flockRow);
+            mainFrame.add(flockRow);
         }
-        MainFrame.repaint();
-        MainFrame.pack();
+        mainFrame.repaint();
+        mainFrame.pack();
     }
 
     class FlockRow extends JPanel
