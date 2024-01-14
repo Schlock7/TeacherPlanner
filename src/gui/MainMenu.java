@@ -5,13 +5,38 @@ import java.awt.*;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Objects;
 
 import misc.Types;
 
 public class MainMenu extends Types implements Serializable{
     transient JFrame mainFrame = new JFrame();
     static ArrayList<JPanel> studentPanels = new ArrayList<>();
-    static Flock currentClass;
+    private static Flock currentClass;
+
+    MainMenu() throws IOException, ClassNotFoundException {
+        try {
+            currentClass = flocks.get(0);
+        }
+        catch (IndexOutOfBoundsException e) {
+            currentClass = new Flock("Example class");
+        }
+        if (flocks.size() > 1) {
+            for (String name : getFlockNames())
+                if (name.equals("Example class")) {
+                    flocks.remove(0);
+                    currentClass = flocks.get(0);
+                }
+        }
+        mainFrame.setResizable(false);
+        mainFrame.setLayout(new GridLayout(0, 1, 20, 5));
+        mainFrame.setLocationRelativeTo(null);
+        new TopBar();
+        new MiddleBar();
+        mainFrame.setVisible(true);
+        updateStudentRows();
+        mainFrame.pack();
+    }
 
     class TopBar extends JPanel
     {
@@ -23,11 +48,20 @@ public class MainMenu extends Types implements Serializable{
                 mainFrame.dispose();
                 new EditClassesMenu();
             });
-            JButton studentSearch = new JButton("Search Student");
+            JButton viewAttendanceReports = new JButton("View Attendance Reports");
+            viewAttendanceReports.addActionListener(e-> {
+                mainFrame.setVisible(false);
+                mainFrame.dispose();
+                try {
+                    new ViewAttendanceReportsMenu(currentClass);
+                } catch (IOException ex) {
+                    throw new RuntimeException(ex);
+                }
+            });
 
             this.add(analyticsButton);
             this.add(editClassesButton);
-            this.add(studentSearch);
+            this.add(viewAttendanceReports);
 
             mainFrame.add(this);
         }
@@ -40,7 +74,13 @@ public class MainMenu extends Types implements Serializable{
             selectClass.setSelectedIndex(getFlockNames().length - 1);
 
             JButton newAttendanceReport = new JButton("New Attendance Report");
-            newAttendanceReport.addActionListener(e -> new AttendanceMenu(currentClass));
+            newAttendanceReport.addActionListener(e -> {
+                try {
+                    new AttendanceMenu(currentClass);
+                } catch (IOException ex) {
+                    throw new RuntimeException(ex);
+                }
+            });
 
             JButton addStudent = getAddStudentButton();
 
@@ -116,6 +156,31 @@ public class MainMenu extends Types implements Serializable{
             JLabel name = new JLabel(student.studentName);
             JButton unenroll = getUnenrollButton(student);
             JButton addGrade = new JButton("Add Grade");
+            addGrade.addActionListener(e->
+            {
+                JPanel panel = new JPanel(new GridLayout(2, 2));
+                panel.add(new JLabel("Assignment Name: "));
+                JTextField nameField = new JTextField();
+                panel.add(nameField);
+
+                panel.add(new JLabel("Grade: "));
+                JTextField gradeField = new JTextField();
+                panel.add(gradeField);
+
+                int result = JOptionPane.showConfirmDialog(null, panel, "Enter Assignment Details",
+                        JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+
+                if (result == JOptionPane.OK_OPTION) {
+                    String assignmentName = Objects.requireNonNull(nameField.getText());
+                    try {
+                        student.addGrade(assignmentName, Integer.parseInt(gradeField.getText()));
+                    } catch (NumberFormatException | IOException ex) {
+                        JOptionPane.showMessageDialog(null, "Invalid input for Grade. Please enter a valid integer.",
+                                "Error", JOptionPane.ERROR_MESSAGE);
+                    }
+                }
+            });
+
             JButton summary = new JButton("Summary");
 
             this.add(name);
@@ -149,28 +214,4 @@ public class MainMenu extends Types implements Serializable{
             });
             return unenroll;
         }
-
-    MainMenu() throws IOException, ClassNotFoundException {
-        try {
-            currentClass = flocks.get(0);
-        }
-        catch (IndexOutOfBoundsException e) {
-            currentClass = new Flock("Example class");
-        }
-        if (flocks.size() > 1) {
-            for (String name : getFlockNames())
-                if (name.equals("Example class")) {
-                    flocks.remove(0);
-                    currentClass = flocks.get(0);
-                }
-        }
-        mainFrame.setResizable(false);
-        mainFrame.setLayout(new GridLayout(0, 1, 20, 5));
-        mainFrame.setLocationRelativeTo(null);
-        new TopBar();
-        new MiddleBar();
-        mainFrame.setVisible(true);
-        updateStudentRows();
-        mainFrame.pack();
-    }
 }

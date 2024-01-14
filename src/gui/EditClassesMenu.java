@@ -134,6 +134,3 @@ public class EditClassesMenu extends Types
         }
     }
 }
-
-/* You see I think the advantage of reporting Mr Trembley to be a creep is he doesn't want to talk to you so bad that he literally just lets you do
-anything */

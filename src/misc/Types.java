@@ -27,7 +27,7 @@ public abstract class Types {
 
 
 
-    public void writeFlocksFile() throws IOException {
+    public static void writeFlocksFile() throws IOException {
         FileOutputStream outputStream = new FileOutputStream(flocksFile);
         ObjectOutputStream objectOutputStream = new ObjectOutputStream(outputStream);
         objectOutputStream.writeObject(flocks);
@@ -66,35 +66,46 @@ public abstract class Types {
     public class Student implements Serializable
     {
         HashMap<String, Integer> grades = new HashMap<>();
-        HashMap<Calendar, Boolean> attendance = new HashMap<>();
+        public HashMap<Calendar, Boolean> attendance = new HashMap<>();
+        public HashMap<Calendar, String> excuse = new HashMap<>();
         public String studentName;
 
-        public Student(Flock flock, String name) throws ClassNotFoundException, IOException{
+        public Student(Flock flock, String name) throws ClassNotFoundException, IOException
+        {
             flock.students.add(this);
             studentName = name;
             writeFlocksFile();
         }
 
-        public void addAttendance (Calendar date, Boolean present) throws IOException
+        public void addAttendance(Calendar date, Boolean present) throws IOException
         {
             attendance.put(date, present);
             writeFlocksFile();
         }
 
-        public void addGrade (String task, int grade) throws IOException
+        public void addExcuse(Calendar date, String e) throws IOException {
+            excuse.put(date, e);
+            writeFlocksFile();
+        }
+
+        public void addGrade(String task, int grade) throws IOException
         {
             grades.put(task, grade);
             writeFlocksFile();
         }
     }
 
-    public class AttendanceReport implements Serializable
+    public static class AttendanceReport implements Serializable
     {
-        String title;
-        AttendanceReport(Flock flock, Calendar date) throws IOException {
+        public String title;
+        public Flock reportFlock;
+        public Calendar reportDate;
+        public AttendanceReport(Flock flock, Calendar date) throws IOException {
+            reportFlock = flock;
+            reportDate = date;
             flock.attendanceReports.add(this);
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy MMM dd HH:mm");
-            title = "Attendance report from the " + sdf.format(date.getTime());
+            SimpleDateFormat sdf = new SimpleDateFormat("MMM dd yyyy");
+            title = "Attendance report from " + sdf.format(date.getTime());
             writeFlocksFile();
         }
     }
