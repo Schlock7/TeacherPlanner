@@ -3,54 +3,79 @@ package misc;
 import gui.Login;
 
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.Objects;
 
 public abstract class Types {
     public static ArrayList<Flock> flocks = new ArrayList<>();
-    static File flocksFile = new File("data/flocks.txt");
+    static String flocksFilePath = "data/flocks.txt";  // Classpath-relative path
 
-    public static void initialize() throws IOException {
-        boolean b = (new File("data/flocks.txt").exists());
-        BufferedReader br = new BufferedReader(new FileReader("data/flocks.txt"));
-        if (!b) {
-            File flocksFile = new File("data/flocks.txt");
-        }
-        else if (!(br.readLine() == null)) {
-            flocks = readFlocksFile();
-        }
-
+    public static void initialize() {
+        flocks = readFlocksFile();
         new Login();
     }
 
-
-
     public static void writeFlocksFile() throws IOException {
-        FileOutputStream outputStream = new FileOutputStream(flocksFile);
-        ObjectOutputStream objectOutputStream = new ObjectOutputStream(outputStream);
-        objectOutputStream.writeObject(flocks);
+        String filePath;
+
+        if (isRunningFromJar()) {
+            String externalDir = System.getProperty("user.home") + File.separator + "TeacherPlannerData";
+            Files.createDirectories(Paths.get(externalDir));
+            filePath = externalDir + File.separator + "flocks.txt";
+        } else {
+            filePath = Objects.requireNonNull(Types.class.getClassLoader().getResource(flocksFilePath)).getFile();
+        }
+
+        try (ObjectOutputStream objectOutputStream = new ObjectOutputStream(
+                new FileOutputStream(filePath))) {
+
+            objectOutputStream.writeObject(flocks);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
-    public static ArrayList<Flock> readFlocksFile() throws IOException {
-        FileInputStream inputStream = new FileInputStream(flocksFile);
-        ObjectInputStream objectInputStream = new ObjectInputStream(inputStream);
+    public static ArrayList<Flock> readFlocksFile() {
+        String filePath;
 
-        try {
+        if (isRunningFromJar()) {
+            String externalDir = System.getProperty("user.home") + File.separator + "TeacherPlannerData";
+            filePath = externalDir + File.separator + "flocks.txt";
+        } else {
+            filePath = Objects.requireNonNull(Types.class.getClassLoader().getResource(flocksFilePath)).getFile();
+        }
+
+        try (ObjectInputStream objectInputStream = new ObjectInputStream(
+                new FileInputStream(filePath))) {
+
             Object readObject = objectInputStream.readObject();
-            if (readObject instanceof ArrayList<?> readFlocksRaw) {
-                if (readFlocksRaw.isEmpty() || readFlocksRaw.get(0) instanceof Flock) {
+
+            if (readObject instanceof @SuppressWarnings("unchecked")ArrayList<?> readFlocksRaw) {
+
+                if (!readFlocksRaw.isEmpty() && readFlocksRaw.get(0) instanceof Flock) {
                     @SuppressWarnings("unchecked")
                     ArrayList<Flock> readFlocks = (ArrayList<Flock>) readFlocksRaw;
                     return readFlocks;
                 }
             }
-        } catch (ClassCastException | ClassNotFoundException e) {
-            throw new RuntimeException();
+        } catch (EOFException eof) {
+            System.out.println("File is empty");
+        } catch (IOException | ClassNotFoundException | ClassCastException e) {
+            e.printStackTrace();
         }
 
-        return new ArrayList<>(); // Return an empty list if unable to read or mismatched data
+        return new ArrayList<>();
+    }
+
+    private static boolean isRunningFromJar() {
+        String className = Types.class.getName().replace('.', '/');
+        String classJar = Objects.requireNonNull(Types.class.getResource("/" + className + ".class")).toString();
+        return classJar.startsWith("jar:");
     }
 
     public String[] getFlockNames() {
@@ -127,10 +152,10 @@ public abstract class Types {
             for (int i = 0; i < students.size(); i++) {
                 Student student = students.get(i);
                 if (student.studentName.equals(targetStudentName)) {
-                    return i; // Return the index if the studentName matches
+                    return i;
                 }
             }
-            return -1; // Return -1 if the student is not found
+            return -1;
         }
     }
 
