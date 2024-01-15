@@ -13,7 +13,6 @@ class ViewAttendanceReportsMenu extends Types implements Serializable {
 
     ViewAttendanceReportsMenu(Flock oldCurrentClass) throws IOException {
         currentClass = oldCurrentClass;
-        System.out.println();
         mainFrame.setResizable(false);
         mainFrame.setLayout(new GridLayout(0, 1, 20, 5));
         mainFrame.setLocationRelativeTo(null);

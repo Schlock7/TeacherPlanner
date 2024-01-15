@@ -28,11 +28,6 @@ public class EditClassesMenu extends Types
     {
         TopBar()
         {
-            JButton analyticsButton = new JButton("Analytics");
-            analyticsButton.addActionListener(e -> {
-                // new analyticsMenu();
-            });
-
             JButton backToMainMenu = new JButton("Back to Main Menu");
             backToMainMenu.addActionListener(e -> {
                 try {
@@ -49,7 +44,6 @@ public class EditClassesMenu extends Types
                 // new studentSummary(studentName);
             });
 
-            this.add(analyticsButton);
             this.add(backToMainMenu);
             this.add(searchStudentButton);
 
@@ -101,7 +95,6 @@ public class EditClassesMenu extends Types
                 int input = JOptionPane.showConfirmDialog(null,
                         "This will permanently delete the class " + flock.name,
                         "Confirm class delete", JOptionPane.OK_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
-                System.out.println(input);
                 if (input == 0) {
                     try {
                         flocks.remove(flock);

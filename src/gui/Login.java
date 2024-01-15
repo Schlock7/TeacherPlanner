@@ -8,7 +8,7 @@ import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 
 public class Login {
-    String password = "password";
+    String password = "#gamblingaround";
     String username = "thompson";
     boolean errorMessageDisplayed = false;
 

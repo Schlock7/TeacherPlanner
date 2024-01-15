@@ -68,11 +68,11 @@ public class AttendanceMenu extends Types {
             attendanceRows.add(attendanceRow);
             mainFrame.add(attendanceRow);
         }
-        mainFrame.repaint();
         mainFrame.pack();
+        mainFrame.repaint();
     }
 
-    static class AttendanceRow extends JPanel {
+    class AttendanceRow extends JPanel {
         private JButton editExcuse;
         AttendanceRow(Student student) {
             this.setBackground(Color.lightGray);
@@ -108,6 +108,8 @@ public class AttendanceMenu extends Types {
                 }
                 revalidate();
                 repaint();
+                mainFrame.pack();
+                mainFrame.repaint();
         });
             this.add(name);
             this.add(present);

@@ -41,7 +41,6 @@ public class MainMenu extends Types implements Serializable{
     class TopBar extends JPanel
     {
         TopBar() {
-            JButton analyticsButton = new JButton("Analytics");
             JButton editClassesButton = new JButton("Edit Classes");
             editClassesButton.addActionListener(e-> {
                 mainFrame.setVisible(false);
@@ -59,7 +58,6 @@ public class MainMenu extends Types implements Serializable{
                 }
             });
 
-            this.add(analyticsButton);
             this.add(editClassesButton);
             this.add(viewAttendanceReports);
 
