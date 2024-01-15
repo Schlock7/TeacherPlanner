@@ -1,8 +1,5 @@
 package misc;
 
-import misc.Types;
-
-import java.io.File;
 import java.io.IOException;
 
 public class Main

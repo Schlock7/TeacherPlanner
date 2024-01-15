@@ -4,7 +4,6 @@ import misc.Types;
 
 import javax.swing.*;
 import java.awt.*;
-import java.text.SimpleDateFormat;
 
 public class ViewReportWindow extends Types {
     JFrame mainFrame = new JFrame();

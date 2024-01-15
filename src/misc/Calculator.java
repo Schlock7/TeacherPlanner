@@ -1,8 +1,5 @@
 package misc;
 
-import javax.swing.*;
-import java.awt.*;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 public abstract class Calculator extends Types {

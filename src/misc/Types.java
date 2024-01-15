@@ -12,7 +12,7 @@ public abstract class Types {
     public static ArrayList<Flock> flocks = new ArrayList<>();
     static File flocksFile = new File("data/flocks.txt");
 
-    public static void initialize() throws IOException, ClassNotFoundException {
+    public static void initialize() throws IOException {
         boolean b = (new File("data/flocks.txt").exists());
         BufferedReader br = new BufferedReader(new FileReader("data/flocks.txt"));
         if (!b) {
@@ -33,7 +33,7 @@ public abstract class Types {
         objectOutputStream.writeObject(flocks);
     }
 
-    public static ArrayList<Flock> readFlocksFile() throws IOException, ClassNotFoundException {
+    public static ArrayList<Flock> readFlocksFile() throws IOException {
         FileInputStream inputStream = new FileInputStream(flocksFile);
         ObjectInputStream objectInputStream = new ObjectInputStream(inputStream);
 
@@ -47,7 +47,7 @@ public abstract class Types {
                 }
             }
         } catch (ClassCastException | ClassNotFoundException e) {
-            e.printStackTrace();
+            throw new RuntimeException();
         }
 
         return new ArrayList<>(); // Return an empty list if unable to read or mismatched data

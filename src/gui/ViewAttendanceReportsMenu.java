@@ -58,9 +58,7 @@ class ViewAttendanceReportsMenu extends Types implements Serializable {
             JLabel title = new JLabel(report.title);
 
             JButton viewReport = new JButton("View");
-            viewReport.addActionListener(e-> {
-                new ViewReportWindow(report);
-            });
+            viewReport.addActionListener(e-> new ViewReportWindow(report));
 
             JButton deleteReport = new JButton("delete");
             deleteReport.setForeground(Color.RED);

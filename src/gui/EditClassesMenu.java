@@ -5,7 +5,6 @@ import misc.Types;
 import javax.swing.*;
 import java.awt.*;
 import java.io.IOException;
-import java.io.Serializable;
 import java.util.ArrayList;
 
 
@@ -41,7 +40,6 @@ public class EditClassesMenu extends Types
             JButton searchStudentButton = new JButton("Search Student");
             searchStudentButton.addActionListener(e -> {
                 String studentName = JOptionPane.showInputDialog("Student name: ");
-                // new studentSummary(studentName);
             });
 
             this.add(backToMainMenu);

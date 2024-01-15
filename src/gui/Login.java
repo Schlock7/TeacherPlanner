@@ -1,8 +1,6 @@
 package gui;
 
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.IOException;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -56,9 +54,7 @@ public class Login {
                 loginFrame.setVisible(false);
                 loginFrame.dispose();
             } else {
-                if (errorMessageDisplayed) {
-                }
-                else {
+                if (!errorMessageDisplayed) {
                     JLabel passwordIsIncorrect = new JLabel("Password is incorrect");
                     passwordIsIncorrect.setForeground(Color.RED);
                     loginPanel.add(passwordIsIncorrect);

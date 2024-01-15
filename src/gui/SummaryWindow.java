@@ -5,15 +5,13 @@ import misc.Types;
 
 import javax.swing.*;
 import java.awt.*;
-import java.lang.reflect.Array;
-import java.util.ArrayList;
 import java.util.Collection;
 
 import static misc.Calculator.getAttendanceDecimal;
 import static misc.Calculator.getAverageGrade;
 
 public class SummaryWindow extends Types {
-    private JFrame mainFrame = new JFrame();
+    private final JFrame mainFrame = new JFrame();
 
     public SummaryWindow(Student student) {
         mainFrame.setLayout(new BoxLayout(mainFrame.getContentPane(), BoxLayout.Y_AXIS));
