@@ -182,6 +182,9 @@ public class MainMenu extends Types implements Serializable{
             });
 
             JButton summary = new JButton("Summary");
+            summary.addActionListener(e->{
+                new SummaryWindow(student);
+            });
 
             this.add(name);
             this.add(unenroll);

@@ -65,7 +65,7 @@ public abstract class Types {
 
     public class Student implements Serializable
     {
-        HashMap<String, Integer> grades = new HashMap<>();
+        public HashMap<String, Integer> grades = new HashMap<>();
         public HashMap<Calendar, Boolean> attendance = new HashMap<>();
         public HashMap<Calendar, String> excuse = new HashMap<>();
         public String studentName;

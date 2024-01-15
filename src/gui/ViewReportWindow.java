@@ -21,7 +21,7 @@ public class ViewReportWindow extends Types {
         mainFrame.setVisible(true);
     }
 
-    public void generateTable() {
+    private void generateTable() {
         String[] columnNames = {"Student name", "Presence", "Reason"};
         String[][] data = new String[report.reportFlock.students.size()][3];
 
